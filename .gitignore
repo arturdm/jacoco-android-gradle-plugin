@@ -1,8 +1,16 @@
+# Gradle
+
 .gradle
+/local.properties
 build/
 
-# Ignore Gradle GUI config
-gradle-app.setting
+# Idea
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
+*.iml
+!.idea/codeStyleSettings.xml
+.idea/**/*
+
+# Mac OS
+
+.DS_Store
+/captures
