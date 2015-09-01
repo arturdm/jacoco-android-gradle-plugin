@@ -33,4 +33,14 @@ class JacocoAndroidPluginSpec extends Specification {
     where:
     androidPlugin << ['com.android.library', 'com.android.application']
   }
+
+  def "Name"() {
+    when:
+    project = AndroidProjectFactory.library()
+    project.apply plugin: com.dicedmelon.gradle.jacoco.android.JacocoAndroidPlugin
+    project.evaluate()
+
+    then:
+    assert true
+  }
 }
