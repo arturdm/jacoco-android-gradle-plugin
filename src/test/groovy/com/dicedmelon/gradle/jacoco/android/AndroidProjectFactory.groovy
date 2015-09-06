@@ -10,6 +10,7 @@ public class AndroidProjectFactory {
   static Project library() {
     Project project = ProjectBuilder.builder().withProjectDir(RESOURCE_WORKING_DIR).build();
     project.apply plugin: 'com.android.library'
+    project.apply plugin: 'jacoco'
     project.android {
       compileSdkVersion 23
       buildToolsVersion '23.0.0'
