@@ -49,6 +49,10 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
       reportTask.executionData executionData
       reportTask.sourceDirectories = project.files(sourceDirs)
       reportTask.classDirectories = project.files(classesDir)
+      reportTask.reports {
+        xml.enabled true
+        html.enabled = true
+      }
       jacocoTestReportTask.dependsOn reportTask
     }
   }
