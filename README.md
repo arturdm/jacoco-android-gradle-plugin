@@ -2,7 +2,7 @@
 
 # jacoco-android-gradle-plugin
 
-```
+```groovy
 buildscript {
   repositories {
     jcenter()
