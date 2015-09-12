@@ -22,7 +22,7 @@ public class AndroidProjectFactory {
   static void configure(Project project) {
     project.android {
       compileSdkVersion 23
-      buildToolsVersion '19.1.0'
+      buildToolsVersion '23.0.0'
 
       defaultConfig {
         versionCode 1
