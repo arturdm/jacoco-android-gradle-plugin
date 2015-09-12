@@ -23,3 +23,7 @@ jacocoAndroidUnitTestReport {
               '**/Manifest*.*']
 }
 ```
+
+```shell
+$ ./gradlew jacocoTestReport
+```
