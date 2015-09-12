@@ -26,6 +26,12 @@ dependencies {
 
 version = scmVersion.version
 
+test {
+  testLogging {
+    exceptionFormat "full"
+  }
+}
+
 publishing {
   publications {
     plugin(MavenPublication) {
