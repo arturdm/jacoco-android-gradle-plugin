@@ -19,13 +19,7 @@ public class AndroidProjectFactory {
     configure(project)
   }
 
-  static void configureAsApplication(Project project) {
-    project.apply plugin: 'com.android.application'
-    configure(project)
-  }
-
   static void configure(Project project) {
-    project.apply plugin: 'jacoco'
     project.android {
       compileSdkVersion 23
       buildToolsVersion '19.1.0'

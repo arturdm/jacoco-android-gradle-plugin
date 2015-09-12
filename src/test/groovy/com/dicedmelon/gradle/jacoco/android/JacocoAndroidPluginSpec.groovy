@@ -1,9 +1,8 @@
 package com.dicedmelon.gradle.jacoco.android
 
-import com.android.build.gradle.internal.coverage.JacocoPlugin
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.PluginApplicationException
-import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -12,12 +11,12 @@ class JacocoAndroidPluginSpec extends Specification {
   Project project
 
   def setup() {
-    project = ProjectBuilder.builder().build()
+    project = AndroidProjectFactory.create()
   }
 
   def "should throw if android plugin not applied"() {
     when:
-    project.apply plugin: 'jacoco-android'
+    project.apply plugin: JacocoAndroidPlugin
 
     then:
     thrown PluginApplicationException
@@ -27,7 +26,7 @@ class JacocoAndroidPluginSpec extends Specification {
   def "should apply jacoco plugin by default with #androidPlugin"() {
     expect:
     project.apply plugin: androidPlugin
-    project.apply plugin: 'jacoco-android'
+    project.apply plugin: JacocoAndroidPlugin
     project.plugins.hasPlugin(JacocoPlugin)
 
     where:
@@ -36,30 +35,6 @@ class JacocoAndroidPluginSpec extends Specification {
 
   def "should add JacocoReport tasks for each variant"() {
     when:
-    project = AndroidProjectFactory.library()
-    project.apply plugin: JacocoAndroidPlugin
-    project.evaluate()
-
-    then:
-    project.tasks.findByName("jacocoTestPaidDebugUnitTestReport")
-    project.tasks.findByName("jacocoTestFreeDebugUnitTestReport")
-    project.tasks.findByName("jacocoTestPaidReleaseUnitTestReport")
-    project.tasks.findByName("jacocoTestFreeReleaseUnitTestReport")
-    project.tasks.findByName("jacocoTestReport")
-  }
-
-  @Unroll
-  def "should work with Android Gradle plugin #androidPluginVersion"() {
-    when:
-    project = AndroidProjectFactory.create()
-    project.buildscript {
-      repositories {
-        jcenter()
-      }
-      dependencies {
-        classpath "com.android.tools.build:gradle:$androidPluginVersion"
-      }
-    }
     AndroidProjectFactory.configureAsLibrary(project)
     project.apply plugin: JacocoAndroidPlugin
     project.evaluate()
@@ -70,9 +45,5 @@ class JacocoAndroidPluginSpec extends Specification {
     project.tasks.findByName("jacocoTestPaidReleaseUnitTestReport")
     project.tasks.findByName("jacocoTestFreeReleaseUnitTestReport")
     project.tasks.findByName("jacocoTestReport")
-
-    where:
-    // '1.3.1', '1.2.3', '1.1.3',
-    androidPluginVersion << ['0.14.4', '0.1']
   }
 }
