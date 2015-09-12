@@ -5,4 +5,5 @@ android:
   components:
   - build-tools-23.0.0
   - android-23
-script: ./gradlew build
+script: ./gradlew build jacocoTestReport
+after_success: bash <(curl -s https://codecov.io/bash)
