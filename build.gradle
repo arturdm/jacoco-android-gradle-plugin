@@ -3,6 +3,7 @@ plugins {
   id 'maven-publish'
   id 'jacoco'
   id 'pl.allegro.tech.build.axion-release' version '1.3.1'
+  id 'com.jfrog.bintray' version '1.3.1'
 }
 
 configurations {
@@ -25,6 +26,13 @@ dependencies {
   testCompile 'com.android.tools.build:gradle:1.3.1'
 }
 
+scmVersion {
+  tag {
+    prefix = 'jacoco-android-release'
+  }
+}
+
+group = 'com.dicedmelon.gradle'
 version = scmVersion.version
 
 test {
@@ -33,18 +41,36 @@ test {
   }
 }
 
+jacocoTestReport {
+  reports {
+    html.enabled false
+    xml.enabled true
+  }
+}
+
 publishing {
   publications {
     plugin(MavenPublication) {
-      groupId 'com.dicedmelon.gradle'
       from components.java
     }
   }
 }
 
-jacocoTestReport {
-  reports {
-    html.enabled false
-    xml.enabled true
+bintray {
+  def credentials = (project.hasProperty('bintray.credentials') ?
+      project.property('bintray.credentials') : System.getenv('BINTRAY_CREDENTIALS') ?: '').split(
+      ':')
+  user = credentials.first()
+  key = credentials.last()
+  publications = ['plugin']
+  pkg {
+    repo = 'maven'
+    name = "$project.group:$project.name"
+    userOrg = 'dicedmelon'
+    version {
+      gpg {
+        sign = true
+      }
+    }
   }
 }
