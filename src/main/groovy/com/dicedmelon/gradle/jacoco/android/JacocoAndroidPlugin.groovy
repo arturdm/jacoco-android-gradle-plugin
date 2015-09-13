@@ -35,12 +35,7 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
 
     def isLibraryPlugin = plugin.class.name.endsWith('.LibraryPlugin')
 
-    def variants
-    if (isLibraryPlugin) {
-      variants = "libraryVariants"
-    } else {
-      variants = "applicationVariants"
-    }
+    def variants = isLibraryPlugin ? "libraryVariants" : "applicationVariants"
 
     project.android[variants].all { variant ->
       def sourceDirs = sourceDirs(variant)
