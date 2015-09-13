@@ -1,12 +1,20 @@
+# jacoco-android-gradle-plugin
 [![Build Status](https://travis-ci.org/arturdm/jacoco-android-gradle-plugin.svg)](https://travis-ci.org/arturdm/jacoco-android-gradle-plugin)
 [![codecov.io](http://codecov.io/github/arturdm/jacoco-android-gradle-plugin/coverage.svg?branch=master)](http://codecov.io/github/arturdm/jacoco-android-gradle-plugin?branch=master)
 
-# jacoco-android-gradle-plugin
+A Gradle plugin that adds fully configured `JacocoReport` tasks for each Android application and library project variant.
+
+## Why
+
+The main purpose of this plugin is to automate the process of providing `JacocoReport` tasks configuration to Android projects.
+
+## Usage
 
 ```groovy
 buildscript {
   repositories {
-    jcenter()
+    ...
+    maven { url 'https://dl.bintray.com/dicedmelon/maven' }
   }
   dependencies {
     ...
@@ -17,6 +25,14 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
 
+android {
+  ...
+  productFlavors {
+    free {}
+    paid {}
+  }
+}
+
 jacocoAndroidUnitTestReport {
   excludes = ['**/R.class',
               '**/R$*.class',
@@ -24,6 +40,17 @@ jacocoAndroidUnitTestReport {
               '**/Manifest*.*']
 }
 ```
+
+This configuration will create a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
+```
+jacocoTestPaidDebugUnitTestReport
+jacocoTestFreeDebugUnitTestReport
+jacocoTestPaidReleaseUnitTestReport
+jacocoTestFreeReleaseUnitTestReport
+jacocoTestReport
+```
+
+To generate reports run:
 
 ```shell
 $ ./gradlew jacocoTestReport
