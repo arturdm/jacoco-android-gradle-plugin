@@ -65,7 +65,6 @@ publishing {
   }
 }
 
-
 bintray {
   def credentials = (project.hasProperty('bintray.credentials') ?
       project.property('bintray.credentials') : System.getenv('BINTRAY_CREDENTIALS') ?: '').split(
