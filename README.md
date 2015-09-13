@@ -15,7 +15,7 @@ The main purpose of this plugin is to automate the process of providing `JacocoR
 buildscript {
   repositories {
     ...
-    maven { url 'https://dl.bintray.com/dicedmelon/maven' }
+    jcenter()
   }
   dependencies {
     ...
