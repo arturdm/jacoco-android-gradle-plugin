@@ -1,6 +1,7 @@
 package com.dicedmelon.gradle.jacoco.android
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.internal.plugins.PluginApplicationException
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import spock.lang.Specification
@@ -31,6 +32,16 @@ class JacocoAndroidPluginSpec extends Specification {
 
     where:
     androidPlugin << ['com.android.library', 'com.android.application']
+  }
+
+  def "should not create jacocoTestReport task if there is one already"() {
+    when:
+    def jacocoTestReportTask = project.task("jacocoTestReport")
+    AndroidProjectFactory.configureAsLibrary(project)
+    project.apply plugin: JacocoAndroidPlugin
+
+    then:
+    project.tasks.getByName("jacocoTestReport") == jacocoTestReportTask
   }
 
   def "should add JacocoReport tasks for each variant"() {
