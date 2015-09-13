@@ -1,18 +1,21 @@
 package com.dicedmelon.gradle.jacoco.android
 
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.internal.plugins.PluginApplicationException
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
+import org.gradle.testing.jacoco.tasks.JacocoReport
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static com.dicedmelon.gradle.jacoco.android.AndroidProjectFactory.configureAsLibrary
+import static com.dicedmelon.gradle.jacoco.android.AndroidProjectFactory.create
 
 class JacocoAndroidPluginSpec extends Specification {
 
   Project project
 
   def setup() {
-    project = AndroidProjectFactory.create()
+    project = create()
   }
 
   def "should throw if android plugin not applied"() {
@@ -37,7 +40,7 @@ class JacocoAndroidPluginSpec extends Specification {
   def "should not create jacocoTestReport task if there is one already"() {
     when:
     def jacocoTestReportTask = project.task("jacocoTestReport")
-    AndroidProjectFactory.configureAsLibrary(project)
+    configureAsLibrary(project)
     project.apply plugin: JacocoAndroidPlugin
 
     then:
@@ -46,7 +49,7 @@ class JacocoAndroidPluginSpec extends Specification {
 
   def "should add JacocoReport tasks for each variant"() {
     when:
-    AndroidProjectFactory.configureAsLibrary(project)
+    configureAsLibrary(project)
     project.apply plugin: JacocoAndroidPlugin
     project.evaluate()
 
@@ -56,5 +59,20 @@ class JacocoAndroidPluginSpec extends Specification {
     project.tasks.findByName("jacocoTestPaidReleaseUnitTestReport")
     project.tasks.findByName("jacocoTestFreeReleaseUnitTestReport")
     project.tasks.findByName("jacocoTestReport")
+  }
+
+  def "should use extension's excludes"() {
+    when:
+    configureAsLibrary(project)
+    project.apply plugin: JacocoAndroidPlugin
+    project.jacocoAndroidUnitTestReport {
+      excludes = ['some exclude']
+    }
+    project.evaluate()
+
+    then:
+    project.tasks.withType(JacocoReport).each {
+      it.classDirectories.patternSet.excludes == ['some exclude']
+    }
   }
 }
