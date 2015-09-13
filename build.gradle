@@ -48,13 +48,23 @@ jacocoTestReport {
   }
 }
 
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
 publishing {
   publications {
     plugin(MavenPublication) {
       from components.java
+
+      artifact sourcesJar {
+        classifier "sources"
+      }
     }
   }
 }
+
 
 bintray {
   def credentials = (project.hasProperty('bintray.credentials') ?
