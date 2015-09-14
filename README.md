@@ -33,6 +33,15 @@ android {
 }
 ```
 
+The above configuration will create a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
+```
+jacocoTestPaidDebugUnitTestReport
+jacocoTestFreeDebugUnitTestReport
+jacocoTestPaidReleaseUnitTestReport
+jacocoTestFreeReleaseUnitTestReport
+jacocoTestReport
+```
+
 The plugin does not exclude classes from report generation by default. You can use `jacocoAndroidUnitTestReport` extension to provide exclusion patterns.
 ```groovy
 jacocoAndroidUnitTestReport {
@@ -41,15 +50,6 @@ jacocoAndroidUnitTestReport {
               '**/BuildConfig.*',
               '**/Manifest*.*']
 }
-```
-
-This configuration will create a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
-```
-jacocoTestPaidDebugUnitTestReport
-jacocoTestFreeDebugUnitTestReport
-jacocoTestPaidReleaseUnitTestReport
-jacocoTestFreeReleaseUnitTestReport
-jacocoTestReport
 ```
 
 To generate all reports run:
