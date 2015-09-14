@@ -3,14 +3,12 @@
 [![codecov.io](http://codecov.io/github/arturdm/jacoco-android-gradle-plugin/coverage.svg?branch=master)](http://codecov.io/github/arturdm/jacoco-android-gradle-plugin?branch=master)
 [![Download](https://api.bintray.com/packages/dicedmelon/maven/com.dicedmelon.gradle:jacoco-android/images/download.svg)](https://bintray.com/dicedmelon/maven/com.dicedmelon.gradle:jacoco-android/_latestVersion)
 
-A Gradle plugin that adds fully configured `JacocoReport` tasks for each Android application and library project variant.
+A Gradle plugin that adds fully configured `JacocoReport` tasks for unit tests of each Android application and library project variant.
 
 ## Why
-
-The main purpose of this plugin is to automate the process of providing `JacocoReport` tasks configuration to Android projects.
+In order to generate JaCoCo unit test coverage reports for Android projects you need to create `JacocoReport` tasks and configure them by providing paths to source code, execution data and compiled classes. It can be troublesome since Android projects can have different flavors and build types thus requiring additional paths to be set. This plugin provides those tasks already configured for you.
 
 ## Usage
-
 ```groovy
 buildscript {
   repositories {
@@ -33,16 +31,9 @@ android {
     paid {}
   }
 }
-
-jacocoAndroidUnitTestReport {
-  excludes = ['**/R.class',
-              '**/R$*.class',
-              '**/BuildConfig.*',
-              '**/Manifest*.*']
-}
 ```
 
-This configuration will create a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
+The above configuration will create a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
 ```
 jacocoTestPaidDebugUnitTestReport
 jacocoTestFreeDebugUnitTestReport
@@ -51,8 +42,17 @@ jacocoTestFreeReleaseUnitTestReport
 jacocoTestReport
 ```
 
-To generate reports run:
+The plugin does not exclude classes from report generation by default. You can use `jacocoAndroidUnitTestReport` extension to provide exclusion patterns.
+```groovy
+jacocoAndroidUnitTestReport {
+  excludes = ['**/R.class',
+              '**/R$*.class',
+              '**/BuildConfig.*',
+              '**/Manifest*.*']
+}
+```
 
+To generate all reports run:
 ```shell
 $ ./gradlew jacocoTestReport
 ```
