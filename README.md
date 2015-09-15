@@ -57,6 +57,8 @@ To generate all reports run:
 $ ./gradlew jacocoTestReport
 ```
 
+Reports for each variant are available at `$buildDir/reports/jacoco` in separate subdirectories, e.g. `build/reports/jacoco/jacocoTestPaidDebugUnitTestReport`.
+
 ## Examples
 * https://github.com/devinciltd/lib
 
