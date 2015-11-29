@@ -17,7 +17,7 @@ buildscript {
   }
   dependencies {
     ...
-    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.0'
+    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
   }
 }
 
@@ -45,10 +45,17 @@ jacocoTestReport
 The plugin excludes Android generated classes from report generation by default. You can use `jacocoAndroidUnitTestReport` extension to add other exclusion patterns if needed.
 ```groovy
 jacocoAndroidUnitTestReport {
-  excludes += ['**/R.class',
-              '**/R$*.class',
-              '**/BuildConfig.*',
-              '**/Manifest*.*']
+  excludes += ['**/AutoValue_*.*',
+              '**/*JavascriptBridge.class']
+}
+```
+
+You can also toggle report generation by type using the extension.
+```groovy
+jacocoAndroidUnitTestReport {
+  csv.enabled false
+  html.enabled true
+  xml.enabled true
 }
 ```
 
