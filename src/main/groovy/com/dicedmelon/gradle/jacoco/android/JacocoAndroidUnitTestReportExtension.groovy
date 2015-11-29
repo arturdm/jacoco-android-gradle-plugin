@@ -2,6 +2,11 @@ package com.dicedmelon.gradle.jacoco.android
 
 class JacocoAndroidUnitTestReportExtension {
 
+  public static final Collection<String> androidDataBindingExcludes =
+      ['android/databinding/**/*.class',
+       '**/android/databinding/*Binding.class',
+       '**/BR.*'].asImmutable()
+
   public static final Collection<String> androidExcludes =
       ['**/R.class',
        '**/R$*.class',
@@ -18,7 +23,8 @@ class JacocoAndroidUnitTestReportExtension {
        '**/*Module_*Factory.class'].asImmutable()
 
   public static final Collection<String> defaultExcludes =
-      (androidExcludes + butterKnifeExcludes + dagger2Excludes).asImmutable()
+      (androidDataBindingExcludes + androidExcludes + butterKnifeExcludes + dagger2Excludes)
+          .asImmutable()
 
   static Closure<Collection<String>> defaultExcludesFactory = { defaultExcludes }
 
