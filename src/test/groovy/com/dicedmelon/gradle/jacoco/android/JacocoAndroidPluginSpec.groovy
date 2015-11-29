@@ -7,7 +7,7 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static com.dicedmelon.gradle.jacoco.android.AndroidProjectFactory.configureAsLibrary
+import static com.dicedmelon.gradle.jacoco.android.AndroidProjectFactory.configureAsLibraryAndApplyPlugin
 import static com.dicedmelon.gradle.jacoco.android.AndroidProjectFactory.create
 
 class JacocoAndroidPluginSpec extends Specification {
@@ -16,6 +16,7 @@ class JacocoAndroidPluginSpec extends Specification {
 
   def setup() {
     project = create()
+    JacocoAndroidUnitTestReportExtension.defaultExcludesFactory = { ['default exclude'] }
   }
 
   def "should throw if android plugin not applied"() {
@@ -40,8 +41,7 @@ class JacocoAndroidPluginSpec extends Specification {
   def "should not create jacocoTestReport task if there is one already"() {
     when:
     def jacocoTestReportTask = project.task("jacocoTestReport")
-    configureAsLibrary(project)
-    project.apply plugin: JacocoAndroidPlugin
+    configureAsLibraryAndApplyPlugin(project)
 
     then:
     project.tasks.getByName("jacocoTestReport") == jacocoTestReportTask
@@ -49,8 +49,7 @@ class JacocoAndroidPluginSpec extends Specification {
 
   def "should add JacocoReport tasks for each variant"() {
     when:
-    configureAsLibrary(project)
-    project.apply plugin: JacocoAndroidPlugin
+    configureAsLibraryAndApplyPlugin(project)
     project.evaluate()
 
     then:
@@ -61,18 +60,42 @@ class JacocoAndroidPluginSpec extends Specification {
     project.tasks.findByName("jacocoTestReport")
   }
 
+  def "should use default excludes"() {
+    when:
+    configureAsLibraryAndApplyPlugin(project)
+    project.evaluate()
+
+    then:
+    assertAllJacocoReportTasksExclude(['default exclude', 'other'])
+  }
+
   def "should use extension's excludes"() {
     when:
-    configureAsLibrary(project)
-    project.apply plugin: JacocoAndroidPlugin
+    configureAsLibraryAndApplyPlugin(project)
     project.jacocoAndroidUnitTestReport {
       excludes = ['some exclude']
     }
     project.evaluate()
 
     then:
+    assertAllJacocoReportTasksExclude(['some exclude'])
+  }
+
+  def "should merge default and extension's excludes"() {
+    when:
+    configureAsLibraryAndApplyPlugin(project)
+    project.jacocoAndroidUnitTestReport {
+      excludes += ['some exclude']
+    }
+    project.evaluate()
+
+    then:
+    assertAllJacocoReportTasksExclude(['default exclude', 'some exclude'])
+  }
+
+  def assertAllJacocoReportTasksExclude(Collection<String> strings) {
     project.tasks.withType(JacocoReport).each {
-      it.classDirectories.patternSet.excludes == ['some exclude']
+      assert strings.containsAll(it.classDirectories.patternSet.excludes as Collection<String>)
     }
   }
 }
