@@ -29,8 +29,14 @@ class JacocoAndroidUnitTestReportExtension {
   static Closure<Collection<String>> defaultExcludesFactory = { defaultExcludes }
 
   Collection<String> excludes
+  ReportConfiguration csv
+  ReportConfiguration html
+  ReportConfiguration xml
 
   JacocoAndroidUnitTestReportExtension(Collection<String> excludes) {
     this.excludes = excludes
+    this.csv = new ReportConfiguration(false)
+    this.html = new ReportConfiguration(true)
+    this.xml = new ReportConfiguration(true)
   }
 }

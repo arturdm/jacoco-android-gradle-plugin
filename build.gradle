@@ -60,9 +60,7 @@ publishing {
     plugin(MavenPublication) {
       from components.java
 
-      artifact sourcesJar {
-        classifier "sources"
-      }
+      artifact sourcesJar
     }
   }
 }
