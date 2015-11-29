@@ -74,7 +74,9 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     reportTask.classDirectories =
         project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
     reportTask.reports {
-      xml.enabled true
+      csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled
+      html.enabled project.jacocoAndroidUnitTestReport.html.enabled
+      xml.enabled project.jacocoAndroidUnitTestReport.xml.enabled
     }
     reportTask
   }

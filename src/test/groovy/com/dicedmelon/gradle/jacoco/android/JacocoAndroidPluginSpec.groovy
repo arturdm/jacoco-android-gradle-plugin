@@ -93,9 +93,46 @@ class JacocoAndroidPluginSpec extends Specification {
     assertAllJacocoReportTasksExclude(['default exclude', 'some exclude'])
   }
 
-  def assertAllJacocoReportTasksExclude(Collection<String> strings) {
-    project.tasks.withType(JacocoReport).each {
-      assert strings.containsAll(it.classDirectories.patternSet.excludes as Collection<String>)
+  @Unroll
+  def "should use extension's #report configuration"() {
+    when:
+    configureAsLibraryAndApplyPlugin(project)
+    project.jacocoAndroidUnitTestReport."$report".enabled true
+    project.evaluate()
+
+    then:
+    eachJacocoReportTask {
+      assert it.reports."$report".enabled == true
+    }
+
+    where:
+    report << ['csv', 'html', 'xml']
+  }
+
+  def "should apply which reports to build by default"() {
+    when:
+    configureAsLibraryAndApplyPlugin(project)
+    project.evaluate()
+
+    then:
+    eachJacocoReportTask {
+      assert it.reports."$report".enabled == enabled
+    }
+
+    where:
+    report | enabled
+    'csv'  | false
+    'html' | true
+    'xml'  | true
+  }
+
+  def eachJacocoReportTask(Closure closure) {
+    project.tasks.withType(JacocoReport).each(closure)
+  }
+
+  def assertAllJacocoReportTasksExclude(Collection<String> excludes) {
+    eachJacocoReportTask {
+      assert excludes.containsAll(it.classDirectories.patternSet.excludes as Collection<String>)
     }
   }
 }
