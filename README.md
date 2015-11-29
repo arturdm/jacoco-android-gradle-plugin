@@ -42,10 +42,10 @@ jacocoTestFreeReleaseUnitTestReport
 jacocoTestReport
 ```
 
-The plugin does not exclude classes from report generation by default. You can use `jacocoAndroidUnitTestReport` extension to provide exclusion patterns.
+The plugin excludes Android generated classes from report generation by default. You can use `jacocoAndroidUnitTestReport` extension to add other exclusion patterns if needed.
 ```groovy
 jacocoAndroidUnitTestReport {
-  excludes = ['**/R.class',
+  excludes += ['**/R.class',
               '**/R$*.class',
               '**/BuildConfig.*',
               '**/Manifest*.*']
@@ -60,6 +60,7 @@ $ ./gradlew jacocoTestReport
 Reports for each variant are available at `$buildDir/reports/jacoco` in separate subdirectories, e.g. `build/reports/jacoco/jacocoTestPaidDebugUnitTestReport`.
 
 ## Examples
+* https://github.com/codecov/example-android
 * https://github.com/devinciltd/lib
 
 ## License

@@ -19,7 +19,9 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
   Logger logger = getLogger(getClass())
 
   @Override public void apply(ProjectInternal project) {
-    project.extensions.create("jacocoAndroidUnitTestReport", JacocoAndroidUnitTestReportExtension)
+    project.extensions.create("jacocoAndroidUnitTestReport",
+        JacocoAndroidUnitTestReportExtension,
+        JacocoAndroidUnitTestReportExtension.defaultExcludesFactory())
     project.plugins.apply(JacocoPlugin)
 
     Plugin plugin = findAndroidPluginOrThrow(project.plugins)
