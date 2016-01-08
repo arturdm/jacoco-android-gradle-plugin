@@ -14,7 +14,8 @@ class JacocoAndroidUnitTestReportExtension {
        '**/Manifest*.*'].asImmutable()
 
   public static final Collection<String> butterKnifeExcludes =
-      ['**/*$ViewInjector*.*'].asImmutable()
+      ['**/*$ViewInjector*.*',
+       '**/*$ViewBinder*.*'].asImmutable()
 
   public static final Collection<String> dagger2Excludes =
       ['**/*_MembersInjector.class',
