@@ -65,7 +65,7 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     def executionData = executionDataFile(testTask)
     JacocoReport reportTask = project.tasks.create("jacoco${testTask.name.capitalize()}Report",
         JacocoReport)
-    testTask.testNameIncludePattern=project.jacocoAndroidUnitTestReport.tests
+    testTask.testNameIncludePattern = project.jacocoAndroidUnitTestReport.tests
     reportTask.dependsOn testTask
     reportTask.group = "Reporting"
     reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."

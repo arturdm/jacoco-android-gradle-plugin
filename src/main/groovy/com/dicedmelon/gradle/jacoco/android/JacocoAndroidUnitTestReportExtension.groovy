@@ -40,6 +40,6 @@ class JacocoAndroidUnitTestReportExtension {
     this.csv = new ReportConfiguration(false)
     this.html = new ReportConfiguration(true)
     this.xml = new ReportConfiguration(true)
-    this.tests="*"
+    this.tests = "*"
   }
 }
