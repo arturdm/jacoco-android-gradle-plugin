@@ -23,7 +23,6 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
         JacocoAndroidUnitTestReportExtension,
         JacocoAndroidUnitTestReportExtension.defaultExcludesFactory())
     project.plugins.apply(JacocoPlugin)
-
     Plugin plugin = findAndroidPluginOrThrow(project.plugins)
     Task jacocoTestReportTask = findOrCreateJacocoTestReportTask(project.tasks)
     def variants = getVariants(project, plugin)
@@ -66,6 +65,7 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     def executionData = executionDataFile(testTask)
     JacocoReport reportTask = project.tasks.create("jacoco${testTask.name.capitalize()}Report",
         JacocoReport)
+    testTask.testNameIncludePattern=project.jacocoAndroidUnitTestReport.tests
     reportTask.dependsOn testTask
     reportTask.group = "Reporting"
     reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."
