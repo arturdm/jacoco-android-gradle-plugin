@@ -29,7 +29,7 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     def variants = getVariants(project, plugin)
 
     variants.all { variant ->
-      JacocoReport reportTask = createReportTask(project, variant)
+      JacocoReport reportTask = createReportTask(project, variant, project.android)
       jacocoTestReportTask.dependsOn reportTask
 
       logTaskAdded(reportTask)
@@ -59,8 +59,8 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     project.android[isLibraryPlugin ? "libraryVariants" : "applicationVariants"]
   }
 
-  private static JacocoReport createReportTask(ProjectInternal project, variant) {
-    def sourceDirs = sourceDirs(variant)
+  private static JacocoReport createReportTask(ProjectInternal project, variant, android) {
+    def sourceDirs = sourceDirs(variant, android)
     def classesDir = classesDir(variant)
     def testTask = testTask(project.tasks, variant)
     def executionData = executionDataFile(testTask)
@@ -81,8 +81,8 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     reportTask
   }
 
-  static def sourceDirs(variant) {
-    variant.sourceSets.java.srcDirs.collect { it.path }.flatten()
+  static def sourceDirs(variant, android) {
+    variant.sourceSets.java.srcDirs.collect { it.path }.plus(android.sourceSets[variant.name].java.srcDirs).flatten()
   }
 
   static def classesDir(variant) {
