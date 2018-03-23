@@ -22,14 +22,12 @@ public class AndroidProjectFactory {
 
   static void configure(Project project) {
     project.android {
-      compileSdkVersion 25
-      buildToolsVersion '25.0.3'
-
+      compileSdkVersion 27
       defaultConfig {
         versionCode 1
         versionName '1.0'
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
       }
 
       buildTypes {
