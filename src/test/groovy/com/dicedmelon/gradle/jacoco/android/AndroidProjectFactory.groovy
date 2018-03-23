@@ -38,6 +38,8 @@ public class AndroidProjectFactory {
         release {}
       }
 
+      flavorDimensions 'default'
+
       productFlavors {
         free {}
         paid {}

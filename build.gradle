@@ -14,18 +14,19 @@ configurations {
 
 repositories {
   jcenter()
+  google()
 }
 
 dependencies {
-  compile 'org.codehaus.groovy:groovy-all:2.4.4'
-  compile gradleApi()
+  implementation 'org.codehaus.groovy:groovy-all:2.4.12'
+  implementation gradleApi()
 
-  provided 'com.google.code.findbugs:jsr305:3.0.1'
+  compileOnly 'com.google.code.findbugs:jsr305:3.0.1'
 
-  testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4') {
+  testImplementation(group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4') {
     exclude group: 'org.codehaus.groovy', module: 'groovy-all'
   }
-  testCompile 'com.android.tools.build:gradle:1.5.0'
+  testImplementation 'com.android.tools.build:gradle:3.1.0'
 }
 
 scmVersion {
