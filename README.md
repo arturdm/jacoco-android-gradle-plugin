@@ -32,6 +32,7 @@ android {
   }
 }
 ```
+Snapshots of the development version are available in [JFrog's `snapshots` repository][snapshots].
 
 The above configuration will create a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
 ```
@@ -86,3 +87,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+[snapshots]: https://oss.jfrog.org/artifactory/oss-snapshot-local/com/dicedmelon/gradle/jacoco-android
