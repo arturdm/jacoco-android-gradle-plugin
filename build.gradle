@@ -3,6 +3,7 @@ plugins {
   id 'maven-publish'
   id 'jacoco'
   id 'pl.allegro.tech.build.axion-release' version '1.9.0'
+  id "com.jfrog.artifactory" version '4.7.1'
   id 'com.jfrog.bintray' version '1.8.0'
 }
 
@@ -66,10 +67,11 @@ publishing {
   }
 }
 
+def credentials = (project.hasProperty('bintray.credentials') ?
+    project.property('bintray.credentials') :
+    System.getenv('BINTRAY_CREDENTIALS') ?: '').split(':')
+
 bintray {
-  def credentials = (project.hasProperty('bintray.credentials') ?
-      project.property('bintray.credentials') : System.getenv('BINTRAY_CREDENTIALS') ?: '').split(
-      ':')
   user = credentials.first()
   key = credentials.last()
   publications = ['plugin']
@@ -83,4 +85,23 @@ bintray {
       }
     }
   }
+}
+
+artifactory {
+  contextUrl = "http://oss.jfrog.org"
+  publish {
+    repository {
+      repoKey = "oss-snapshot-local"
+      username = credentials.first()
+      password = credentials.last()
+    }
+    defaults {
+      publications("plugin")
+    }
+  }
+  clientConfig.info.setBuildNumber(System.getProperty("build.number"))
+}
+
+task publishSnapshot() {
+  if (version.endsWith("-SNAPSHOT")) dependsOn artifactoryPublish
 }
