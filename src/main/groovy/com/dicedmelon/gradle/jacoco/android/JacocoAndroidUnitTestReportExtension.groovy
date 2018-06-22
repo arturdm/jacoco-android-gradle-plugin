@@ -14,14 +14,18 @@ class JacocoAndroidUnitTestReportExtension {
        '**/Manifest*.*'].asImmutable()
 
   public static final Collection<String> butterKnifeExcludes =
-      ['**/*$ViewInjector*.*',
-       '**/*$ViewBinder*.*'].asImmutable()
+      ['**/*_ViewInjector*.*',
+      '**/*_ViewBinding*.*',
+       '**/*_ViewBinder*.*'].asImmutable()
 
   public static final Collection<String> dagger2Excludes =
-      ['**/*_MembersInjector.class',
+      ['**/*_MembersInjector*.class',
        '**/Dagger*Component.class',
        '**/Dagger*Component$Builder.class',
-       '**/*Module_*Factory.class'].asImmutable()
+       '**/*_*Factory*.*',
+       '**/*Component*.*',
+       '**/*Subcomponent*.*',
+       '**/*Module*.*'].asImmutable()
 
   public static final Collection<String> defaultExcludes =
       (androidDataBindingExcludes + androidExcludes + butterKnifeExcludes + dagger2Excludes)
