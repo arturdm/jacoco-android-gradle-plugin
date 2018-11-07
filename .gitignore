@@ -1,17 +1,13 @@
 # Gradle
-
 .gradle
-/local.properties
-/gradle.properties
+local.properties
 build/
 
 # Idea
-
 *.iml
 !.idea/codeStyleSettings.xml
 .idea/**/*
 
 # Mac OS
-
 .DS_Store
 /captures
