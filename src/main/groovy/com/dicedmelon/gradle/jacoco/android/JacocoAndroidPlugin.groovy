@@ -90,7 +90,7 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
   }
 
   static def testTask(TaskCollection<Task> tasks, variant) {
-    tasks.withType(Test).find { task -> task.name =~ /test${variant.name.capitalize()}UnitTest/ }
+    tasks.getByName("test${variant.name.capitalize()}UnitTest")
   }
 
   static def executionDataFile(Task testTask) {
