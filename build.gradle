@@ -34,6 +34,7 @@ scmVersion {
   tag {
     prefix = 'jacoco-android-release'
   }
+  versionCreator "versionWithBranch"
 }
 
 group = 'com.dicedmelon.gradle'
@@ -103,5 +104,9 @@ artifactory {
 }
 
 task publishSnapshot() {
-  if (version.endsWith("-SNAPSHOT")) dependsOn artifactoryPublish
+  if (version.endsWith("-SNAPSHOT")) dependsOn "artifactoryPublish"
+}
+
+task publishRelease() {
+  if (!version.endsWith("-SNAPSHOT")) dependsOn "bintrayUpload"
 }
