@@ -92,7 +92,11 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
   }
 
   static def classesDir(variant) {
-    variant.javaCompile.destinationDir
+    if (variant.hasProperty('javaCompileProvider')) {
+      variant.javaCompileProvider.get().destinationDir
+    } else {
+      variant.javaCompile.destinationDir
+    }
   }
 
   static def testTask(TaskCollection<Task> tasks, variant) {
