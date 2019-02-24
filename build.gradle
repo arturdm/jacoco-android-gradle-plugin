@@ -2,9 +2,9 @@ plugins {
   id 'groovy'
   id 'maven-publish'
   id 'jacoco'
-  id 'pl.allegro.tech.build.axion-release' version '1.9.0'
-  id "com.jfrog.artifactory" version '4.7.1'
-  id 'com.jfrog.bintray' version '1.8.0'
+  id 'pl.allegro.tech.build.axion-release' version '1.9.3'
+  id 'com.jfrog.artifactory' version '4.8.1'
+  id 'com.jfrog.bintray' version '1.8.4'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_5
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.codehaus.groovy:groovy-all:2.4.12'
+  implementation 'org.codehaus.groovy:groovy-all:2.4.15'
   implementation gradleApi()
 
   compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
@@ -27,7 +27,7 @@ dependencies {
   testImplementation(group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4') {
     exclude group: 'org.codehaus.groovy', module: 'groovy-all'
   }
-  testImplementation 'com.android.tools.build:gradle:3.1.0'
+  testImplementation 'com.android.tools.build:gradle:3.3.1'
 }
 
 scmVersion {
