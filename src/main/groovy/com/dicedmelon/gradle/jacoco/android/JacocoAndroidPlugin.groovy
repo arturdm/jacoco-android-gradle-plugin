@@ -8,7 +8,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
-import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
@@ -18,7 +17,7 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
 
   Logger logger = getLogger(getClass())
 
-  @Override public void apply(ProjectInternal project) {
+  @Override void apply(ProjectInternal project) {
     project.extensions.create("jacocoAndroidUnitTestReport",
         JacocoAndroidUnitTestReportExtension,
         JacocoAndroidUnitTestReportExtension.defaultExcludesFactory())
@@ -43,10 +42,6 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
           'You must apply the Android plugin or the Android library plugin before using the jacoco-android plugin')
     }
     plugin
-  }
-
-  private static boolean hasKotlin(PluginContainer plugins) {
-    plugins.findPlugin('kotlin-android')
   }
 
   private static Task findOrCreateJacocoTestReportTask(TaskContainer tasks) {
@@ -76,15 +71,13 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."
     reportTask.executionData = project.files(executionData)
     reportTask.sourceDirectories = project.files(sourceDirs)
-    def javaTree =
-        project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
+    reportTask.classDirectories = project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
+
     if (kotlin) {
       def kotlinClassesDir = "${project.buildDir}/tmp/kotlin-classes/${variant.name}"
       def kotlinTree =
           project.fileTree(dir: kotlinClassesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
-      reportTask.classDirectories = javaTree + kotlinTree
-    } else {
-      reportTask.classDirectories = javaTree
+      reportTask.classDirectories += kotlinTree
     }
     reportTask.reports {
       csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled
@@ -108,6 +101,10 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
 
   static def executionDataFile(Task testTask) {
     testTask.jacoco.destinationFile.path
+  }
+
+  private static boolean hasKotlin(PluginContainer plugins) {
+    plugins.findPlugin('kotlin-android')
   }
 
   private void logTaskAdded(JacocoReport reportTask) {
