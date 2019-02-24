@@ -24,6 +24,14 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
 
+jacoco {
+  toolVersion = "0.8.3"
+}
+
+tasks.withType(Test) {
+  jacoco.includeNoLocationClasses = true
+}
+
 android {
   ...
   productFlavors {
@@ -32,9 +40,8 @@ android {
   }
 }
 ```
-Snapshots of the development version are available in [JFrog's `snapshots` repository][snapshots].
 
-The above configuration will create a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
+The above configuration creates a `JacocoReport` task for each variant and an additional `jacocoTestReport` task that runs all of them.
 ```
 jacocoTestPaidDebugUnitTestReport
 jacocoTestFreeDebugUnitTestReport
@@ -70,6 +77,23 @@ Reports for each variant are available at `$buildDir/reports/jacoco` in separate
 ## Examples
 * https://github.com/codecov/example-android
 * https://github.com/devinciltd/lib
+
+## Snapshot usage
+
+Snapshots of the development version are available in [JFrog's `snapshots` repository][snapshots].
+
+```
+buildscript {
+  repositories {
+    ...
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+  }
+  dependencies {
+    ...
+    classpath 'com.dicedmelon.gradle:jacoco-android:x.y.z-SNAPSHOT'
+  }
+}
+```
 
 ## License
 ```
