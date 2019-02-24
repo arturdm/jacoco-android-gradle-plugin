@@ -45,6 +45,10 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     plugin
   }
 
+  private static boolean hasKotlin(PluginContainer plugins) {
+    plugins.findPlugin('kotlin-android')
+  }
+
   private static Task findOrCreateJacocoTestReportTask(TaskContainer tasks) {
     Task jacocoTestReportTask = tasks.findByName("jacocoTestReport")
     if (!jacocoTestReportTask) {
@@ -64,6 +68,7 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     def classesDir = classesDir(variant)
     def testTask = testTask(project.tasks, variant)
     def executionData = executionDataFile(testTask)
+    def kotlin = hasKotlin(project.plugins)
     JacocoReport reportTask = project.tasks.create("jacoco${testTask.name.capitalize()}Report",
         JacocoReport)
     reportTask.dependsOn testTask
@@ -71,8 +76,16 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."
     reportTask.executionData = project.files(executionData)
     reportTask.sourceDirectories = project.files(sourceDirs)
-    reportTask.classDirectories =
+    def javaTree =
         project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
+    if (kotlin) {
+      def kotlinClassesDir = "${project.buildDir}/tmp/kotlin-classes/${variant.name}"
+      def kotlinTree =
+          project.fileTree(dir: kotlinClassesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
+      reportTask.classDirectories = javaTree + kotlinTree
+    } else {
+      reportTask.classDirectories = javaTree
+    }
     reportTask.reports {
       csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled
       html.enabled project.jacocoAndroidUnitTestReport.html.enabled
@@ -100,7 +113,6 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
   private void logTaskAdded(JacocoReport reportTask) {
     logger.info("Added $reportTask")
     logger.info("  executionData: $reportTask.executionData.asPath")
-    logger.info("  classDirectories: $reportTask.classDirectories.dir.path")
     logger.info("  sourceDirectories: $reportTask.sourceDirectories.asPath")
   }
 }
