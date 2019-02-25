@@ -49,6 +49,7 @@ jobs:
     install:
     - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
     - git fetch --unshallow --tags || true
+    - git fetch origin master
     - git checkout master
     - git reset --hard $TRAVIS_BRANCH
     script:
