@@ -3,6 +3,7 @@ package com.dicedmelon.gradle.jacoco.android
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Task
+import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.PluginContainer
@@ -71,13 +72,15 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."
     reportTask.executionData = project.files(executionData)
     reportTask.sourceDirectories = project.files(sourceDirs)
-    reportTask.classDirectories = project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
+    FileTree javaTree = project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
 
     if (kotlin) {
       def kotlinClassesDir = "${project.buildDir}/tmp/kotlin-classes/${variant.name}"
       def kotlinTree =
           project.fileTree(dir: kotlinClassesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
-      reportTask.classDirectories += kotlinTree
+      reportTask.classDirectories = javaTree + kotlinTree
+    } else {
+      reportTask.classDirectories = javaTree
     }
     reportTask.reports {
       csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled

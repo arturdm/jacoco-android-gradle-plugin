@@ -4,7 +4,7 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 
-public class AndroidProjectFactory {
+class AndroidProjectFactory {
 
   public static final File PROJECT_SOURCE_DIR = new File("src/test/resources");
 
