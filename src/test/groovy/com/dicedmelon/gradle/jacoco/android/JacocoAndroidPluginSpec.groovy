@@ -1,6 +1,7 @@
 package com.dicedmelon.gradle.jacoco.android
 
 import org.gradle.api.Project
+import org.gradle.api.internal.file.collections.DirectoryFileTree
 import org.gradle.api.internal.plugins.PluginApplicationException
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.tasks.JacocoReport
@@ -126,13 +127,26 @@ class JacocoAndroidPluginSpec extends Specification {
     'xml'  | true
   }
 
-  def eachJacocoReportTask(Closure closure) {
+  def "should add kotlin class directories if plugin added"() {
+    when:
+    configureAsLibraryAndApplyPlugin(project)
+    project.apply plugin: "kotlin-android"
+    project.evaluate()
+
+    then:
+    eachJacocoReportTask { JacocoReport jacocoReport ->
+      Collection<DirectoryFileTree> fileTrees = jacocoReport.classDirectories.asFileTrees
+      assert fileTrees.each { it.dir.path.contains("/tmp/kotlin-classes/") }
+    }
+  }
+
+  void eachJacocoReportTask(Closure<JacocoReport> closure) {
     project.tasks.withType(JacocoReport).each(closure)
   }
 
-  def assertAllJacocoReportTasksExclude(Collection<String> excludes) {
-    eachJacocoReportTask {
-      assert excludes.containsAll(it.classDirectories.patternSet.excludes as Collection<String>)
+  void assertAllJacocoReportTasksExclude(Collection<String> excludes) {
+    eachJacocoReportTask { JacocoReport jacocoReport ->
+      assert excludes.containsAll(jacocoReport.classDirectories.from.excludes.flatten())
     }
   }
 }
