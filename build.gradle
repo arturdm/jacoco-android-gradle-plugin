@@ -2,8 +2,8 @@ plugins {
   id 'groovy'
   id 'maven-publish'
   id 'jacoco'
-  id 'pl.allegro.tech.build.axion-release' version '1.9.3'
-  id 'com.jfrog.artifactory' version '4.8.1'
+  id 'pl.allegro.tech.build.axion-release' version '1.10.0'
+  id 'com.jfrog.artifactory' version '4.9.3'
   id 'com.jfrog.bintray' version '1.8.4'
 }
 
