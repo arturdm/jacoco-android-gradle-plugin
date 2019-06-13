@@ -5,6 +5,9 @@ class JacocoAndroidUnitTestReportExtension {
   public static final Collection<String> androidDataBindingExcludes =
       ['android/databinding/**/*.class',
        '**/android/databinding/*Binding.class',
+       '**/databinding/*Binding.class',
+       '**/databinding/*BindingImpl.class',
+       '**/databinding/*Sw600dpImpl.class',
        '**/BR.*'].asImmutable()
 
   public static final Collection<String> androidExcludes =
