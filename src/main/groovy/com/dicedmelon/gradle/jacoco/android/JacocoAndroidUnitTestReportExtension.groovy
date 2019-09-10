@@ -33,11 +33,13 @@ class JacocoAndroidUnitTestReportExtension {
   ReportConfiguration csv
   ReportConfiguration html
   ReportConfiguration xml
+  String destination
 
   JacocoAndroidUnitTestReportExtension(Collection<String> excludes) {
     this.excludes = excludes
     this.csv = new ReportConfiguration(false)
     this.html = new ReportConfiguration(true)
     this.xml = new ReportConfiguration(true)
+    this.destination = null
   }
 }
