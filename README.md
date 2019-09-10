@@ -17,7 +17,7 @@ buildscript {
   }
   dependencies {
     ...
-    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
+    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.5'
   }
 }
 
@@ -25,7 +25,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
 
 jacoco {
-  toolVersion = "0.8.3"
+  toolVersion = "0.8.4"
 }
 
 tasks.withType(Test) {
@@ -64,6 +64,14 @@ jacocoAndroidUnitTestReport {
   csv.enabled false
   html.enabled true
   xml.enabled true
+}
+```
+
+By default your report will be in `[root_project]/[project_name]/build/jacoco/`
+But you can change the local reporting directory :
+```groovy
+jacocoAndroidUnitTestReport {
+  destination "/path/to/the/new/local/directory/"
 }
 ```
 

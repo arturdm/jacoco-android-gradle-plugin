@@ -83,9 +83,23 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
       reportTask.classDirectories.setFrom(javaTree)
     }
     reportTask.reports {
+      def destination = project.jacocoAndroidUnitTestReport.destination
+      
       csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled
       html.enabled project.jacocoAndroidUnitTestReport.html.enabled
       xml.enabled project.jacocoAndroidUnitTestReport.xml.enabled
+
+      if (csv.enabled) {
+        csv.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.csv" : "${destination.trim()}/jacoco.csv")
+      }
+      
+      if (html.enabled) {
+        html.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacocoHtml" : "${destination.trim()}/jacocoHtml")
+      }
+
+      if (xml.enabled) {
+        xml.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.xml" : "${destination.trim()}/jacoco.xml")
+      }
     }
     reportTask
   }
@@ -118,5 +132,9 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     logger.info("Added $reportTask")
     logger.info("  executionData: $reportTask.executionData.asPath")
     logger.info("  sourceDirectories: $reportTask.sourceDirectories.asPath")
+    logger.info("  csv.destination: $reportTask.reports.csv.destination")
+    logger.info("  xml.destination: $reportTask.reports.xml.destination")
+    logger.info("  html.destination: $reportTask.reports.html.destination")
+
   }
 }
