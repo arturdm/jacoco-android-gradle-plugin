@@ -70,17 +70,17 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     reportTask.dependsOn testTask
     reportTask.group = "Reporting"
     reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."
-    reportTask.executionData = project.files(executionData)
-    reportTask.sourceDirectories = project.files(sourceDirs)
+    reportTask.executionData.setFrom(project.files(executionData))
+    reportTask.sourceDirectories.setFrom(project.files(sourceDirs))
     FileTree javaTree = project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
 
     if (kotlin) {
       def kotlinClassesDir = "${project.buildDir}/tmp/kotlin-classes/${variant.name}"
       def kotlinTree =
           project.fileTree(dir: kotlinClassesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
-      reportTask.classDirectories = javaTree + kotlinTree
+      reportTask.classDirectories.setFrom(javaTree + kotlinTree)
     } else {
-      reportTask.classDirectories = javaTree
+      reportTask.classDirectories.setFrom(javaTree)
     }
     reportTask.reports {
       csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled
