@@ -14,12 +14,6 @@ class AndroidProjectFactory {
     project
   }
 
-  static void configureAsLibraryAndApplyPlugin(Project project) {
-    project.apply plugin: 'com.android.library'
-    configure(project)
-    project.apply plugin: JacocoAndroidPlugin
-  }
-
   static void configure(Project project) {
     project.android {
       compileSdkVersion 28

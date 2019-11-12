@@ -1,6 +1,14 @@
 package com.dicedmelon.gradle.jacoco.android
 
-class JacocoAndroidUnitTestReportExtension {
+import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+
+abstract class JacocoAndroidUnitTestReportExtension {
 
   public static final Collection<String> androidDataBindingExcludes =
       ['android/databinding/**/*.class',
@@ -27,19 +35,17 @@ class JacocoAndroidUnitTestReportExtension {
       (androidDataBindingExcludes + androidExcludes + butterKnifeExcludes + dagger2Excludes)
           .asImmutable()
 
-  static Closure<Collection<String>> defaultExcludesFactory = { defaultExcludes }
+  abstract ListProperty<String> getExcludes()
+  abstract Property<Boolean> getCsv()
+  abstract Property<Boolean> getHtml()
+  abstract Property<Boolean> getXml()
+  abstract DirectoryProperty getDestination()
 
-  Collection<String> excludes
-  ReportConfiguration csv
-  ReportConfiguration html
-  ReportConfiguration xml
-  String destination
-
-  JacocoAndroidUnitTestReportExtension(Collection<String> excludes) {
-    this.excludes = excludes
-    this.csv = new ReportConfiguration(false)
-    this.html = new ReportConfiguration(true)
-    this.xml = new ReportConfiguration(true)
-    this.destination = null
+  JacocoAndroidUnitTestReportExtension(Project project) {
+    excludes.convention(defaultExcludes)
+    csv.convention(false)
+    html.convention(true)
+    xml.convention(true)
+    destination.convention(project.layout.buildDirectory.dir("reports/jacoco"))
   }
 }

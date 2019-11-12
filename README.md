@@ -53,25 +53,25 @@ jacocoTestReport
 The plugin excludes Android generated classes from report generation by default. You can use `jacocoAndroidUnitTestReport` extension to add other exclusion patterns if needed.
 ```groovy
 jacocoAndroidUnitTestReport {
-  excludes += ['**/AutoValue_*.*',
-              '**/*JavascriptBridge.class']
+  excludes.addAll('**/AutoValue_*.*',
+                  '**/*JavascriptBridge.class')
 }
 ```
 
 You can also toggle report generation by type using the extension.
 ```groovy
 jacocoAndroidUnitTestReport {
-  csv.enabled false
-  html.enabled true
-  xml.enabled true
+  csv = false
+  html = true
+  xml = true
 }
 ```
 
-By default your report will be in `[root_project]/[project_name]/build/jacoco/`
+By default your report will be in `${project.buildDir}/jacoco/`
 But you can change the local reporting directory :
 ```groovy
 jacocoAndroidUnitTestReport {
-  destination "/path/to/the/new/local/directory/"
+  destination = project.file("/path/to/the/new/local/directory/")
 }
 ```
 

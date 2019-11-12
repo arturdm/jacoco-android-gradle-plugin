@@ -1,140 +1,155 @@
 package com.dicedmelon.gradle.jacoco.android
 
-import org.gradle.api.GradleException
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.api.BaseVariant
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.FileTree
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.logging.Logger
+import org.gradle.api.file.Directory
+import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.PluginContainer
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.testing.Test
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
-import static org.gradle.api.logging.Logging.getLogger
+class JacocoAndroidPlugin implements Plugin<Project> {
 
-class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
+  @Override void apply(Project target) {
+    target.pluginManager.withPlugin("com.android.application") {
+      AppExtension appExtension = target.getExtensions().findByName("android") as AppExtension
+      configurationAction(target, appExtension.applicationVariants)
+    }
 
-  Logger logger = getLogger(getClass())
+    target.pluginManager.withPlugin("com.android.dynamic-feature") {
+      AppExtension appExtension = target.getExtensions().findByName("android") as AppExtension
+      configurationAction(target, appExtension.applicationVariants)
+    }
 
-  @Override void apply(ProjectInternal project) {
-    project.extensions.create("jacocoAndroidUnitTestReport",
+    target.pluginManager.withPlugin("com.android.library") {
+      LibraryExtension libExt = target.getExtensions().findByName("android") as LibraryExtension
+      configurationAction(target, libExt.libraryVariants)
+    }
+
+    target.afterEvaluate {
+      JacocoAndroidUnitTestReportExtension extension = findExtension(target)
+      //no extension instance means no configuration action ran
+      if (extension == null) {
+        boolean androidPresent = target.pluginManager.hasPlugin("com.android.base")
+        if (!androidPresent) {
+          throw new InvalidPluginException(
+              "Failed to apply JacocoAndroidPlugin, no android plugin found on project.")
+        } else {
+          throw new InvalidPluginException(
+              "Failed to apply JacocoAndroidPlugin, unsupported android plugin found. Only application or library are supported.")
+        }
+      }
+    }
+  }
+
+  private static void createExtension(Project target) {
+    target.extensions.create("jacocoAndroidUnitTestReport",
         JacocoAndroidUnitTestReportExtension,
-        JacocoAndroidUnitTestReportExtension.defaultExcludesFactory())
-    project.plugins.apply(JacocoPlugin)
+        target)
+  }
 
-    Plugin plugin = findAndroidPluginOrThrow(project.plugins)
-    Task jacocoTestReportTask = findOrCreateJacocoTestReportTask(project.tasks)
-    def variants = getVariants(project, plugin)
+  private static JacocoAndroidUnitTestReportExtension findExtension(Project target) {
+    return target.extensions.findByType(JacocoAndroidUnitTestReportExtension)
+  }
+
+  private static TaskProvider<? extends Task> registerLifecycleTask(TaskContainer tasks) {
+    return tasks.register("jacocoTestReport") { lifecycleTask -> lifecycleTask.group = "Reporting" }
+  }
+
+  private static void configurationAction(Project target,
+      DomainObjectSet<? extends BaseVariant> variants) {
+    TaskProvider<Task> lifecycleTaskProvider = registerLifecycleTask(target.tasks)
+
+    createExtension(target)
+    target.plugins.apply(JacocoPlugin)
 
     variants.all { variant ->
-      JacocoReport reportTask = createReportTask(project, variant)
-      jacocoTestReportTask.dependsOn reportTask
-
-      logTaskAdded(reportTask)
+      TaskProvider<JacocoReport> variantReportProvider = registerReportTask(target, variant)
+      lifecycleTaskProvider.configure { it.dependsOn(variantReportProvider) }
     }
   }
 
-  private static Plugin findAndroidPluginOrThrow(PluginContainer plugins) {
-    Plugin plugin = plugins.findPlugin('android') ?: plugins.findPlugin('android-library')
-    if (!plugin) {
-      throw new GradleException(
-          'You must apply the Android plugin or the Android library plugin before using the jacoco-android plugin')
-    }
-    plugin
-  }
+  private static TaskProvider<JacocoReport> registerReportTask(Project project,
+      BaseVariant variant) {
 
-  private static Task findOrCreateJacocoTestReportTask(TaskContainer tasks) {
-    Task jacocoTestReportTask = tasks.findByName("jacocoTestReport")
-    if (!jacocoTestReportTask) {
-      jacocoTestReportTask = tasks.create("jacocoTestReport")
-      jacocoTestReportTask.group = "Reporting"
-    }
-    jacocoTestReportTask
-  }
+    def testTaskProvider = testTask(project.tasks, variant)
+    def reportTaskName = "jacoco${testTaskProvider.name.capitalize()}Report"
+    return project.tasks.register(reportTaskName, JacocoReport) { reportTask ->
+      JacocoAndroidUnitTestReportExtension extension = findExtension(project)
+      reportTask.group = "Reporting"
 
-  private static def getVariants(ProjectInternal project, Plugin plugin) {
-    boolean isLibraryPlugin = plugin.class.name.endsWith('.LibraryPlugin')
-    project.android[isLibraryPlugin ? "libraryVariants" : "applicationVariants"]
-  }
+      reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."
 
-  private static JacocoReport createReportTask(ProjectInternal project, variant) {
-    def sourceDirs = sourceDirs(variant)
-    def classesDir = classesDir(variant)
-    def testTask = testTask(project.tasks, variant)
-    def executionData = executionDataFile(testTask)
-    def kotlin = hasKotlin(project.plugins)
-    JacocoReport reportTask = project.tasks.create("jacoco${testTask.name.capitalize()}Report",
-        JacocoReport)
-    reportTask.dependsOn testTask
-    reportTask.group = "Reporting"
-    reportTask.description = "Generates Jacoco coverage reports for the ${variant.name} variant."
-    reportTask.executionData.setFrom(project.files(executionData))
-    reportTask.sourceDirectories.setFrom(project.files(sourceDirs))
-    FileTree javaTree = project.fileTree(dir: classesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
+      reportTask.executionData.from(executionDataFile(testTaskProvider))
 
-    if (kotlin) {
-      def kotlinClassesDir = "${project.buildDir}/tmp/kotlin-classes/${variant.name}"
-      def kotlinTree =
-          project.fileTree(dir: kotlinClassesDir, excludes: project.jacocoAndroidUnitTestReport.excludes)
-      reportTask.classDirectories.setFrom(javaTree + kotlinTree)
-    } else {
-      reportTask.classDirectories.setFrom(javaTree)
-    }
-    reportTask.reports {
-      def destination = project.jacocoAndroidUnitTestReport.destination
-      
-      csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled
-      html.enabled project.jacocoAndroidUnitTestReport.html.enabled
-      xml.enabled project.jacocoAndroidUnitTestReport.xml.enabled
+      reportTask.sourceDirectories.from(sourceDirs(variant))
 
-      if (csv.enabled) {
-        csv.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.csv" : "${destination.trim()}/jacoco.csv")
-      }
-      
-      if (html.enabled) {
-        html.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacocoHtml" : "${destination.trim()}/jacocoHtml")
+      reportTask.classDirectories.from(extension.excludes.map {
+        project.fileTree(dir: classesDir(variant), excludes: it)
+      })
+
+      if (hasKotlin(project.plugins)) {
+        reportTask.classDirectories.from(extension.excludes.map {
+          project.fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/${variant.name}",
+              excludes: it)
+        })
       }
 
-      if (xml.enabled) {
-        xml.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.xml" : "${destination.trim()}/jacoco.xml")
+      reportTask.reports { reportContainer ->
+        Provider<Directory> reportRoot = extension.destination
+            .map { it.dir("unitTest") }
+            .map { it.dir(variant.dirName) }
+
+        reportContainer.csv.setEnabled(extension.csv)
+        reportContainer.csv.setDestination(reportRoot
+            .map { it.file("jacoco.csv") }
+            .map { it.asFile })
+
+        reportContainer.html.setEnabled(extension.html)
+        reportContainer.html.setDestination(reportRoot
+            .map { it.dir("html") }
+            .map { it.asFile })
+
+        reportContainer.xml.setEnabled(extension.xml)
+        reportContainer.xml.setDestination(reportRoot
+            .map { it.file("jacoco.xml") }
+            .map { it.asFile })
       }
+    } as TaskProvider<JacocoReport>
+  }
+
+  static List<File> sourceDirs(BaseVariant variant) {
+    return variant.sourceSets.collect { it.javaDirectories }.flatten() as List<File>
+  }
+
+  static Provider<File> classesDir(BaseVariant variant) {
+    return variant.javaCompileProvider.map { javaCompile -> javaCompile.destinationDir }
+  }
+
+  static TaskProvider<Test> testTask(TaskCollection<Task> tasks, variant) {
+    return tasks.named("test${variant.name.capitalize()}UnitTest", Test)
+  }
+
+  static Provider<File> executionDataFile(TaskProvider<Test> provider) {
+    return provider.map { testTask ->
+      testTask.extensions
+          .getByType(JacocoTaskExtension)
+          .destinationFile
     }
-    reportTask
-  }
-
-  static def sourceDirs(variant) {
-    variant.sourceSets.java.srcDirs.collect { it.path }.flatten()
-  }
-
-  static def classesDir(variant) {
-    if (variant.hasProperty('javaCompileProvider')) {
-      variant.javaCompileProvider.get().destinationDir
-    } else {
-      variant.javaCompile.destinationDir
-    }
-  }
-
-  static def testTask(TaskCollection<Task> tasks, variant) {
-    tasks.getByName("test${variant.name.capitalize()}UnitTest")
-  }
-
-  static def executionDataFile(Task testTask) {
-    testTask.jacoco.destinationFile.path
   }
 
   private static boolean hasKotlin(PluginContainer plugins) {
-    plugins.findPlugin('kotlin-android')
-  }
-
-  private void logTaskAdded(JacocoReport reportTask) {
-    logger.info("Added $reportTask")
-    logger.info("  executionData: $reportTask.executionData.asPath")
-    logger.info("  sourceDirectories: $reportTask.sourceDirectories.asPath")
-    logger.info("  csv.destination: $reportTask.reports.csv.destination")
-    logger.info("  xml.destination: $reportTask.reports.xml.destination")
-    logger.info("  html.destination: $reportTask.reports.html.destination")
-
+    return plugins.hasPlugin('kotlin-android')
   }
 }
