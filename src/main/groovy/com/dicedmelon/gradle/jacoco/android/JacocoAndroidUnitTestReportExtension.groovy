@@ -1,12 +1,9 @@
 package com.dicedmelon.gradle.jacoco.android
 
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 
 abstract class JacocoAndroidUnitTestReportExtension {
 
@@ -36,9 +33,13 @@ abstract class JacocoAndroidUnitTestReportExtension {
           .asImmutable()
 
   abstract ListProperty<String> getExcludes()
+
   abstract Property<Boolean> getCsv()
+
   abstract Property<Boolean> getHtml()
+
   abstract Property<Boolean> getXml()
+
   abstract DirectoryProperty getDestination()
 
   JacocoAndroidUnitTestReportExtension(Project project) {
