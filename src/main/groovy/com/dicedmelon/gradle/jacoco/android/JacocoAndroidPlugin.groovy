@@ -47,7 +47,7 @@ class JacocoAndroidPlugin implements Plugin<Project> {
               "Failed to apply JacocoAndroidPlugin, no android plugin found on project.")
         } else {
           throw new InvalidPluginException(
-              "Failed to apply JacocoAndroidPlugin, unsupported android plugin found. Only application or library are supported.")
+              "Failed to apply JacocoAndroidPlugin, unsupported android plugin found.")
         }
       }
     }
