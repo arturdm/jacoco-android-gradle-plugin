@@ -108,7 +108,7 @@ class JacocoAndroidPlugin implements Plugin<Project> {
 
       reportTask.reports { reportContainer ->
         Provider<Directory> reportRoot = extension.destination
-            .map { it.dir("unitTest") }
+            .map { it.dir("test") }
             .map { it.dir(variant.dirName) }
 
         reportContainer.csv.setEnabled(extension.csv)

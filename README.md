@@ -67,7 +67,7 @@ jacocoAndroidUnitTestReport {
 }
 ```
 
-By default your report will be in `${project.buildDir}/jacoco/`
+By default your report destination convention is `${project.buildDir}/reports/jacoco/`
 But you can change the local reporting directory :
 ```groovy
 jacocoAndroidUnitTestReport {
@@ -75,12 +75,13 @@ jacocoAndroidUnitTestReport {
 }
 ```
 
+Reports for each variant are available at `${destination}/test/${variant.dirName}/` in separate subdirectories, e.g. `build/reports/jacoco/test/paid/debug/`.
+
 To generate all reports run:
 ```shell
 $ ./gradlew jacocoTestReport
 ```
 
-Reports for each variant are available at `$buildDir/reports/jacoco` in separate subdirectories, e.g. `build/reports/jacoco/jacocoTestPaidDebugUnitTestReport`.
 
 ## Examples
 * https://github.com/codecov/example-android
