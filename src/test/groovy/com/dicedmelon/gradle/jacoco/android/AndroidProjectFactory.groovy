@@ -1,4 +1,4 @@
-package com.dicedmelon.gradle.jacoco.android
+ CODECOV_TOKEN="e9de4807-7bbc-48ef-b43f-3bd3e7ba983apackage com.dicedmelon.gradle.jacoco.android
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
