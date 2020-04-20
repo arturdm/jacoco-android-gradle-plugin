@@ -175,7 +175,7 @@ class JacocoAndroidPluginSpec extends Specification {
     then:
     eachJacocoReportTask { JacocoReport jacocoReport ->
       Collection<DirectoryFileTree> fileTrees = jacocoReport.classDirectories.asFileTrees
-      assert fileTrees.each { it.dir.path.contains("/tmp/kotlin-classes/") }
+      fileTrees.each { assert it.dir.path.contains("/tmp/kotlin-classes/") }
     }
   }
 

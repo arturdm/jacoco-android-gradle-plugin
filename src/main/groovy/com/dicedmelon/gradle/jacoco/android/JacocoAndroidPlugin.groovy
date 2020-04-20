@@ -99,7 +99,7 @@ class JacocoAndroidPlugin implements Plugin<Project> {
         project.fileTree(dir: classesDir(variant), excludes: it)
       })
 
-      if (hasKotlin(project.plugins)) {
+      project.plugins.withId("kotlin-android") {
         reportTask.classDirectories.from(extension.excludes.map {
           project.fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/${variant.name}",
               excludes: it)
