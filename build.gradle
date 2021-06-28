@@ -62,10 +62,22 @@ task sourcesJar(type: Jar) {
 
 publishing {
   publications {
-    plugin(MavenPublication) {
-      from components.java
+    mavenJava(MavenPublication) {
+      from(components.java)
 
       artifact sourcesJar
+    }
+  }
+}
+
+gradlePlugin {
+  plugins {
+    jacocoAndroidGradlePlugin {
+      id = 'com.dicedmelon.gradle.jacoco-android'
+      displayName = 'Plugin for simplifying JacocoReport configuration for Android projects'
+      description =
+          'A Gradle plugin that adds fully configured JacocoReport tasks for unit tests of each Android application and library project variant.'
+      implementationClass = 'com.dicedmelon.gradle.jacoco.android.JacocoAndroidPlugin'
     }
   }
 }
@@ -75,20 +87,8 @@ pluginBundle {
   vcsUrl = 'https://github.com/arturdm/jacoco-android-gradle-plugin'
   tags = ['android', 'jacoco', 'testing', 'coverage', 'integrationtesting']
 
-  mavenCoordinates {
-    groupId = 'com.dicedmelon.gradle'
-  }
-}
-
-gradlePlugin {
   plugins {
-    jacocoAndroidGradlePlugin {
-      id = 'jacoco-android'
-      displayName = 'Plugin for simplifying JacocoReport configuration for Android projects'
-      description =
-          'A Gradle plugin that adds fully configured JacocoReport tasks for unit tests of each Android application and library project variant.'
-      implementationClass = 'com.dicedmelon.gradle.jacoco.android.JacocoAndroidPlugin'
-    }
+    jacocoAndroidGradlePlugin
   }
 }
 

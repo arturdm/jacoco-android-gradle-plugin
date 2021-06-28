@@ -13,16 +13,16 @@ In order to generate JaCoCo unit test coverage reports for Android projects you 
 buildscript {
   repositories {
     ...
-    jcenter()
+    mavenCentral()
   }
   dependencies {
     ...
-    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
+    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.5'
   }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco-android'
+apply plugin: 'com.dicedmelon.gradle.jacoco-android'
 
 jacoco {
   toolVersion = "0.8.4"
@@ -105,7 +105,7 @@ buildscript {
 
 ## License
 ```
-Copyright 2015 Artur Stępniewski
+Copyright 2015-2021 Artur Stępniewski
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

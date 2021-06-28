@@ -2,17 +2,17 @@ buildscript {
   repositories {
     google()
     mavenCentral()
-    mavenLocal()
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
   }
 
   dependencies {
     classpath 'com.android.tools.build:gradle:3.3.1'
-    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.5'
+    classpath 'com.dicedmelon.gradle:jacoco-android:0.1.5-SNAPSHOT'
   }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco-android'
+apply plugin: 'com.dicedmelon.gradle.jacoco-android'
 
 repositories {
   mavenCentral()
