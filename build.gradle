@@ -3,8 +3,9 @@ plugins {
   id 'maven-publish'
   id 'jacoco'
   id 'pl.allegro.tech.build.axion-release' version '1.10.0'
-  id 'com.jfrog.artifactory' version '4.9.3'
-  id 'com.jfrog.bintray' version '1.8.4'
+  id 'com.gradle.plugin-publish' version '0.15.0'
+  id "java-gradle-plugin"
+  id "io.github.gradle-nexus.publish-plugin" version '1.1.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_5
@@ -14,7 +15,7 @@ configurations {
 }
 
 repositories {
-  jcenter()
+  mavenCentral()
   google()
 }
 
@@ -55,7 +56,7 @@ jacocoTestReport {
 }
 
 task sourcesJar(type: Jar) {
-  classifier = 'sources'
+  archiveClassifier.set('sources')
   from sourceSets.main.allSource
 }
 
@@ -69,45 +70,33 @@ publishing {
   }
 }
 
-def credentials = (project.hasProperty('bintray.credentials') ?
-    project.property('bintray.credentials') :
-    System.getenv('BINTRAY_CREDENTIALS') ?: '').split(':')
+pluginBundle {
+  website = 'https://github.com/arturdm/jacoco-android-gradle-plugin'
+  vcsUrl = 'https://github.com/arturdm/jacoco-android-gradle-plugin'
+  tags = ['android', 'jacoco', 'testing', 'coverage', 'integrationtesting']
 
-bintray {
-  user = credentials.first()
-  key = credentials.last()
-  publications = ['plugin']
-  pkg {
-    repo = 'maven'
-    name = "$project.group:$project.name"
-    userOrg = 'dicedmelon'
-    version {
-      gpg {
-        sign = true
-      }
+  mavenCoordinates {
+    groupId = 'com.dicedmelon.gradle'
+  }
+}
+
+gradlePlugin {
+  plugins {
+    jacocoAndroidGradlePlugin {
+      id = 'jacoco-android'
+      displayName = 'Plugin for simplifying JacocoReport configuration for Android projects'
+      description =
+          'A Gradle plugin that adds fully configured JacocoReport tasks for unit tests of each Android application and library project variant.'
+      implementationClass = 'com.dicedmelon.gradle.jacoco.android.JacocoAndroidPlugin'
     }
   }
 }
 
-artifactory {
-  contextUrl = "http://oss.jfrog.org"
-  publish {
-    repository {
-      repoKey = "oss-snapshot-local"
-      username = credentials.first()
-      password = credentials.last()
-    }
-    defaults {
-      publications("plugin")
+nexusPublishing {
+  repositories {
+    sonatype {
+      nexusUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+      snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
   }
-  clientConfig.info.setBuildNumber(System.getProperty("build.number"))
-}
-
-task publishSnapshot() {
-  if (version.endsWith("-SNAPSHOT")) dependsOn "artifactoryPublish"
-}
-
-task publishRelease() {
-  if (!version.endsWith("-SNAPSHOT")) dependsOn "bintrayUpload"
 }

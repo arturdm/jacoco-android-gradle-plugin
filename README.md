@@ -88,13 +88,13 @@ Reports for each variant are available at `$buildDir/reports/jacoco` in separate
 
 ## Snapshot usage
 
-Snapshots of the development version are available in [JFrog's `snapshots` repository][snapshots].
+Snapshots of the development version are available in [Sonatype Nexus `snapshots` repository][snapshots].
 
 ```
 buildscript {
   repositories {
     ...
-    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
   }
   dependencies {
     ...
@@ -120,4 +120,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[snapshots]: https://oss.jfrog.org/artifactory/oss-snapshot-local/com/dicedmelon/gradle/jacoco-android
+[snapshots]: https://s01.oss.sonatype.org/content/repositories/snapshots/com/dicedmelon/gradle/jacoco-android
