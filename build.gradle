@@ -62,8 +62,8 @@ task sourcesJar(type: Jar) {
 
 publishing {
   publications {
-    mavenJava(MavenPublication) {
-      from(components.java)
+    plugin(MavenPublication) {
+      from components.java
 
       artifact sourcesJar
     }
