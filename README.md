@@ -1,7 +1,7 @@
 # jacoco-android-gradle-plugin
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com.dicedmelon.gradle/jacoco-android/maven-metadata.xml.svg?label=Gradle%20Plugin%20Portal)](https://plugins.gradle.org/plugin/com.dicedmelon.gradle.jacoco-android)
 [![Build Status](https://travis-ci.org/arturdm/jacoco-android-gradle-plugin.svg)](https://travis-ci.org/arturdm/jacoco-android-gradle-plugin)
 [![codecov](https://codecov.io/gh/arturdm/jacoco-android-gradle-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/arturdm/jacoco-android-gradle-plugin)
-[![Download](https://api.bintray.com/packages/dicedmelon/maven/com.dicedmelon.gradle:jacoco-android/images/download.svg)](https://bintray.com/dicedmelon/maven/com.dicedmelon.gradle:jacoco-android/_latestVersion)
 
 A Gradle plugin that adds fully configured `JacocoReport` tasks for unit tests of each Android application and library project variant.
 
@@ -83,6 +83,7 @@ $ ./gradlew jacocoTestReport
 Reports for each variant are available at `$buildDir/reports/jacoco` in separate subdirectories, e.g. `build/reports/jacoco/jacocoTestPaidDebugUnitTestReport`.
 
 ## Examples
+* [example](example)
 * https://github.com/codecov/example-android
 * https://github.com/devinciltd/lib
 
