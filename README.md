@@ -13,7 +13,7 @@ In order to generate JaCoCo unit test coverage reports for Android projects you 
 buildscript {
   repositories {
     ...
-    mavenCentral()
+    maven { url 'https://plugins.gradle.org/m2/' }
   }
   dependencies {
     ...
