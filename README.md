@@ -29,7 +29,11 @@ jacoco {
 }
 
 tasks.withType(Test) {
-  jacoco.includeNoLocationClasses = true
+  jacoco {
+    includeNoLocationClasses = true
+    excludes = [
+      "jdk.internal.*" // Allows it to run on Java 11
+    ]
 }
 
 android {
