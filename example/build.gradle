@@ -3,7 +3,7 @@ buildscript {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
     google()
     mavenCentral()
-    maven { url 'https://plugins.gradle.org/m2/' }
+    gradlePluginPortal()
   }
 
   dependencies {
