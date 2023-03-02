@@ -84,21 +84,21 @@ class JacocoAndroidPlugin implements Plugin<ProjectInternal> {
     }
     reportTask.reports {
       def destination = project.jacocoAndroidUnitTestReport.destination
-      
-      csv.enabled project.jacocoAndroidUnitTestReport.csv.enabled
-      html.enabled project.jacocoAndroidUnitTestReport.html.enabled
-      xml.enabled project.jacocoAndroidUnitTestReport.xml.enabled
+
+      csv.required project.jacocoAndroidUnitTestReport.csv.enabled
+      html.required project.jacocoAndroidUnitTestReport.html.enabled
+      xml.required project.jacocoAndroidUnitTestReport.xml.enabled
 
       if (csv.enabled) {
-        csv.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.csv" : "${destination.trim()}/jacoco.csv")
+        csv.outputLocation new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.csv" : "${destination.trim()}/jacoco.csv")
       }
-      
+
       if (html.enabled) {
-        html.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacocoHtml" : "${destination.trim()}/jacocoHtml")
+        html.outputLocation new File((destination == null) ? "${project.buildDir}/jacoco/jacocoHtml" : "${destination.trim()}/jacocoHtml")
       }
 
       if (xml.enabled) {
-        xml.destination new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.xml" : "${destination.trim()}/jacoco.xml")
+        xml.outputLocation new File((destination == null) ? "${project.buildDir}/jacoco/jacoco.xml" : "${destination.trim()}/jacoco.xml")
       }
     }
     reportTask
